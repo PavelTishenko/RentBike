@@ -1,26 +1,38 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actions from './actions';
+import { hocWithService } from './hoc';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
 
-export default App;
+const App = (props) => { 
+    const { LOADED, name, bikeService } = props;
+
+    useEffect(() => {
+        const data = bikeService.getData;
+        console.log(data);
+    });
+
+    return (
+        <div>
+            <span>{name}</span>
+            <button onClick={ LOADED }>Show</button>
+        </div>
+    );
+ };
+
+ 
+const mapStateToProps = (state) => {
+    return{
+        name: state
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    const { LOADED } = bindActionCreators(actions, dispatch);
+    return {
+        LOADED
+    };
+};
+
+ export default hocWithService()(connect(mapStateToProps, mapDispatchToProps)(App));
