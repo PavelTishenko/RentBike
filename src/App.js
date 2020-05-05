@@ -4,35 +4,38 @@ import { bindActionCreators } from 'redux';
 import * as actions from './actions';
 import { hocWithService } from './hoc';
 
-
-const App = (props) => { 
-    const { LOADED, name, bikeService } = props;
-
+const App = (props) => {
+    const { bikeService, DATA_LOADED, state } = props;
     useEffect(() => {
-        const data = bikeService.getData;
-        console.log(data);
-    });
+        bikeService.getData()
+            .then((data) => DATA_LOADED(data))
+    }, []);
 
-    return (
-        <div>
-            <span>{name}</span>
-            <button onClick={ LOADED }>Show</button>
-        </div>
-    );
- };
+    if (state) {
+        const { data } = state;
+        const bikes = data.map((bike) => {
+            return <span key={bike.id}>{bike.title}</span>
+        })
+        return (<span>{bikes}</span>)
+    } else {
+        return (<span>wait</span>)
+    };
+};
 
- 
+
+
 const mapStateToProps = (state) => {
-    return{
-        name: state
+    return {
+        state: state
     };
 };
 
 const mapDispatchToProps = (dispatch) => {
-    const { LOADED } = bindActionCreators(actions, dispatch);
+    const { LOADED, DATA_LOADED } = bindActionCreators(actions, dispatch);
     return {
-        LOADED
+        LOADED,
+        DATA_LOADED
     };
 };
 
- export default hocWithService()(connect(mapStateToProps, mapDispatchToProps)(App));
+export default hocWithService()(connect(mapStateToProps, mapDispatchToProps)(App));
