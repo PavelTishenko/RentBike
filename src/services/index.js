@@ -15,6 +15,6 @@ export default class BikeService {
     getData() {
         return new Promise((resolve) => 
             setTimeout(() =>resolve(this.data)
-            , 700))
+            , 3700))
     };
 };
